@@ -1,4 +1,4 @@
-# 终端盯盘神器 (Terminal Stock Ticker)
+# 终端盯盘工具 (Terminal Stock Ticker)
 
 > 🤖 **Powered by AI**: 本项目的构思与核心 Rust 源码的完整实现，均由开发者与 **AI 智能编程助手** 结对协同独立完成。
 
