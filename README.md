@@ -1,59 +1,60 @@
-# Terminal Stock Ticker (终端盯盘神器)
+# 终端盯盘神器 (Terminal Stock Ticker)
 
-A blazing fast, locally configurable, high-performance terminal stock ticker written in **Rust**. Built specifically to cleanly track your favorite assets—such as Chinese A-shares, Hong Kong Stocks, US Stocks, and Futures/ETFs—right from your terminal, without eating up system resources!
+一款使用 **Rust** 编写的、极速、低内存占用的命令行终端盯盘工具！专为开发者、极客以及终端重度使用者打造。支持在本地 Windows、macOS 终端运行，或者通过 SSH 在远程 Linux 服务器上无缝挂机看盘，上班摸鱼、随时监控个人资产波动的终极利器。
 
-This project utilizes `ratatui` for an interactive TUI (Text User Interface) and uses the Sina Finance API to provide millisecond-latency price quotes without requiring any API keys.
+数据全部经由新浪财经 API 实时拉取（极低延迟响应，无需任何配置，无需 API Key）。
 
-## ✨ Features
+## ✨ 核心亮点
 
-- **Multi-market Support**: Automatically decodes A-shares, Hong Kong Stocks, US Stocks, and Futures (e.g., Gold).
-- **Asynchronous Architecture**: Network fetching runs in an isolated background Tokio thread. The terminal UI never stutters, guaranteeing maximum fluidity.
-- **Categorized Tabs**: Supports grouping your stocks by custom categories via interactive Tabs. Switch tabs seamlessly with the **`←` / `→` arrow keys** or **`Tab`**.
-- **Interactive Sorting**: Dynamic, on-the-fly table sorting!
-  - Press **`c`** to sort by Change Percentage (涨跌幅).
-  - Press **`n`** to sort alphabetically by Name.
-  - Press **`r`** to restore the default order.
-- **Customizable Configuration**: A `config.json` file is automatically generated in your directory upon first launch. You can freely edit this file to add, rename, or reorganize your favorite stocks—no recompilation needed!
-- **Visual Encoding**: Prices automatically turn Red/Green according to Chinese stock market conventions (Red for positive, Green for negative).
+- **多市场全覆盖**：无缝解析 A 股、港股、美股、期金、ETF 基金等实时行情，一步到位。
+- **纯异步高性能**：底层采用 `tokio` 异步运行时处理网络请求，彻底脱离界面绘制主线程。即使在网络极差或服务器波动时，终端界面反馈也依然保证满帧顺畅不卡顿！
+- **可切换的分类卡片 (Tabs)**：极简的按键逻辑，按下 `←` / `→` 方向键或 `Tab` 键，即可在您自定义的各个市场（A股、美股、自选池等）之间秒速即走切换。
+- **交互式热键即时排序**：支持实时动态排序，看盘不再死板。
+  - 按下 **`c`** 键：按最新“涨跌幅 (Change %)”排序（再按一次无缝切换 涨跌正序/倒序）。
+  - 按下 **`n`** 键：按“股票名称”首字母排列。
+  - 按下 **`r`** 键：恢复到配置文件中的初始默认组合顺序。
+- **支持离线自定义 JSON 配置**：首次运行程序后会在同目录下自动生成一份 `config.json` 开箱即用配置模板。想要加减自选股代码、甚至改变卡片分布？只需简单编辑 `config.json` 并重新运行程序即可生效，告别以前每次加新股都需要改代码、重新编译源码的苦恼！
+- **符合本土习惯的视效呈现**：自动适配中文涨跌标红方案——经典的“红涨绿跌”直抵灵魂。并从底层智能解决新浪老旧的 GBK 网页抓取到现代主流 UTF-8 Linux 终端环境的乱码问题。
 
-## 🚀 Pre-requisites
+## 🚀 安装与使用
 
-- **Rust toolchain** (`cargo` must be installed). If not, get it from [rustup.rs](https://rustup.rs/).
+首先，您需要预先安装 **Rust** 编译环境 (`cargo`)。若未安装，请访问 [rustup.rs](https://rustup.rs/) 获取。
 
-## 🛠️ Usage & Installation
-
-### Option 1: Run Natively / Compile Locally
+### 方式一：本地直接编译运行（Windows/macOS/Linux通用）
 ```bash
-# Clone the repository
-git clone https://github.com/YOUR_USERNAME/stock_ticker.git
+# 1. 下载本仓库
+git clone https://github.com/您的用户名/您的仓库名.git
 cd stock_ticker
 
-# Run directly
+# 2. 直接运行看盘
 cargo run
 
-# Or build the release binary
+# 或者编译出一份极致性能的高效二进制文件用于投产
 cargo build --release
 ./target/release/stock_ticker
 ```
 
-### Option 2: Run in WSL (Windows Subsystem for Linux)
-If you are developing on Windows and want a true Linux TUI experience:
+### 方式二：在 Windows 构建，传到 Linux 服务器运行 (推荐极客玩法)
+如果您在本地 Windows 上的 WSL 里开发，想传给别台无缝部署的闲置 Linux VPS 等机器直接用：
 ```bash
 wsl cargo build --release
-cp ./target/release/stock_ticker /path/to/your/linux/workspace
+cp ./target/release/stock_ticker /你想存放的最终路径/
 ./stock_ticker
 ```
 
-## ⚙️ Configuration (`config.json`)
+## ⚙️ JSON 配置说明 (`config.json`)
 
-The first time you run `./stock_ticker`, it generates a `config.json` next to the executable. Edit the file to customize your ticker list. Standard ticker prefixes are strongly recommended:
-- `sh600036` (Shanghai A-share)
-- `sz002594` (Shenzhen A-share)
-- `rt_hk00700` (Hong Kong Stock)
-- `gb_aapl` (US Stock)
-- `hf_GC` (Futures/Gold)
+第一次启动 `./stock_ticker` 并按 `q` 退出后，它会在本程序旁边静静地躺出一个 `config.json` 文件。
+打开此文件，您可以非常简单地修改各个叫 `name` 的标签栏，以及它的 `symbols` 代码数组：
 
-Enjoy discreetly monitoring the market! Press **`q`** to quit anytime.
+填入新浪财经约定的标准股票前缀格式即可识别绝大部分资产：
+* **沪市 A 股**：加前缀 `sh`，如 `sh600036` (招商银行)、`sh513180` (恒生科技 ETF等)
+* **深市 A 股**：加前缀 `sz`，如 `sz002594` (比亚迪)
+* **港股**：加前缀 `rt_hk`，如 `rt_hk00700` (腾讯控股)
+* **美股**：加前缀 `gb_`，如 `gb_aapl` (苹果公司)
+* **期货/大宗**：加前缀 `hf_`，如 `hf_GC` (纽约期金)
+
+Enjoy 尽情且低调地盯盘吧！随时按 **`q`** 完美跑路退出。
 
 ## License
-MIT
+MIT 协议开源发行
