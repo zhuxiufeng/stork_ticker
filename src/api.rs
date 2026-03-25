@@ -46,6 +46,9 @@ pub async fn fetch_stocks(client: &Client, symbols: &[String]) -> Result<Vec<Sto
             price = fields.get(0).unwrap_or(&"0").parse().unwrap_or(0.0);
             let prev_close: f64 = fields.get(7).unwrap_or(&"0").parse().unwrap_or(0.0);
             name = fields.get(13).unwrap_or(&symbol.as_str()).to_string();
+            if price == 0.0 {
+                price = prev_close;
+            }
             if prev_close > 0.0 {
                 change_amount = price - prev_close;
                 change_percent = (change_amount / prev_close) * 100.0;
@@ -55,6 +58,9 @@ pub async fn fetch_stocks(client: &Client, symbols: &[String]) -> Result<Vec<Sto
             name = fields[0].to_string();
             price = fields.get(3).unwrap_or(&"0").parse().unwrap_or(0.0);
             let prev_close: f64 = fields.get(2).unwrap_or(&"0").parse().unwrap_or(0.0);
+            if price == 0.0 {
+                price = prev_close;
+            }
             if prev_close > 0.0 {
                 change_amount = price - prev_close;
                 change_percent = (change_amount / prev_close) * 100.0;
